@@ -224,6 +224,13 @@ select:focus {
   filter: brightness(1.05);
 }
 
+.danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: none;
+}
+
 .calendar-controls {
   display: flex;
   gap: 8px;
@@ -358,6 +365,26 @@ select:focus {
 
 @media (max-width: 720px) {
   .calendar {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .calendar-header {
+    font-size: 0.75rem;
+  }
+
+  .calendar-cell {
+    min-height: 90px;
+    padding: 6px;
+  }
+
+  .calendar-date {
+    font-size: 0.85rem;
+  }
+
+  .booking-item {
+    font-size: 0.68rem;
+    padding: 4px 6px;
     grid-template-columns: repeat(2, 1fr);
   }
 
