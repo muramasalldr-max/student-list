@@ -224,6 +224,13 @@ select:focus {
   filter: brightness(1.05);
 }
 
+.danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: none;
+}
+
 .calendar-controls {
   display: flex;
   gap: 8px;

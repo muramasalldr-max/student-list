@@ -111,6 +111,16 @@ function selectStudent(studentId) {
   }
   detailName.textContent = `${student.name} の予約カレンダー`;
   detailMeta.textContent = `${student.weekday} / ${student.startTime} / ${student.durationMin}分 / 月${student.lessonsPerMonth}回`;
+  deleteStudentButton.disabled = false;
+  studentDetail.classList.remove("hidden");
+  renderCalendar();
+}
+
+function renderEmptyDetail() {
+  selectedStudentId = null;
+  detailName.textContent = "生徒を選択してください";
+  detailMeta.textContent = "生徒を選択するとカレンダーに予約を追加できます。";
+  deleteStudentButton.disabled = true;
   studentDetail.classList.remove("hidden");
   renderCalendar();
 }
@@ -385,15 +395,23 @@ deleteStudentButton.addEventListener("click", () => {
   if (!result.ok) {
     return;
   }
-  selectedStudentId = null;
-  studentDetail.classList.add("hidden");
   listStudents();
   renderTodayBookings();
+  if (students.length > 0) {
+    selectStudent(students[0].id);
+    return;
+  }
+  renderEmptyDetail();
 });
 
 function initializeApp() {
   listStudents();
   renderTodayBookings();
+  if (students.length > 0) {
+    selectStudent(students[0].id);
+    return;
+  }
+  renderEmptyDetail();
 }
 
 initializeApp();
