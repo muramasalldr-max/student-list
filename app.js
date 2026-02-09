@@ -121,6 +121,8 @@ function selectStudent(studentId) {
   studentDetail.classList.remove("hidden");
   renderCalendar();
   renderSchedule(selectedDate);
+  studentDetail.classList.remove("hidden");
+  renderCalendar();
 }
 
 function renderEmptyDetail() {
@@ -132,6 +134,8 @@ function renderEmptyDetail() {
   studentDetail.classList.remove("hidden");
   renderCalendar();
   renderSchedule(selectedDate);
+  studentDetail.classList.remove("hidden");
+  renderCalendar();
 }
 
 function deleteStudent(studentId) {
@@ -320,6 +324,29 @@ function renderCalendar() {
       check.className = "calendar-check";
       check.textContent = "✓";
       cell.appendChild(check);
+    const dayBookings = listBookingsByDate(cellDateKey);
+    if (dayBookings.length) {
+      const list = document.createElement("div");
+      list.className = "booking-list";
+      dayBookings.forEach((booking) => {
+        const item = document.createElement("div");
+        item.className = "booking-item";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = `${booking.startTime}-${booking.endTime} ${booking.studentName}`;
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const result = deleteBooking(booking.id);
+          if (!result.ok) {
+            return;
+          }
+          renderCalendar();
+          renderTodayBookings();
+        });
+        item.appendChild(button);
+        list.appendChild(item);
+      });
+      cell.appendChild(list);
     }
 
     cell.addEventListener("click", () => handleDateClick(cellDateKey));
@@ -330,6 +357,31 @@ function renderCalendar() {
 function handleDateClick(date) {
   renderSchedule(date);
   renderCalendar();
+  if (!selectedStudentId) {
+    alert("生徒を選択してください。");
+    return;
+  }
+  const student = students.find((item) => item.id === selectedStudentId);
+  if (!student) {
+    alert("生徒情報が見つかりません。");
+    return;
+  }
+
+  const endTime = addMinutes(student.startTime, student.durationMin);
+  const result = createBooking({
+    studentId: selectedStudentId,
+    date,
+    startTime: student.startTime,
+    endTime,
+  });
+
+  if (!result.ok) {
+    alert(result.message);
+    return;
+  }
+
+  renderCalendar();
+  renderTodayBookings();
 }
 
 function renderTodayBookings() {
@@ -447,6 +499,10 @@ deleteStudentButton.addEventListener("click", () => {
     return;
   }
   renderEmptyDetail();
+  selectedStudentId = null;
+  studentDetail.classList.add("hidden");
+  listStudents();
+  renderTodayBookings();
 });
 
 function initializeApp() {
