@@ -402,6 +402,10 @@ deleteStudentButton.addEventListener("click", () => {
     return;
   }
   renderEmptyDetail();
+  selectedStudentId = null;
+  studentDetail.classList.add("hidden");
+  listStudents();
+  renderTodayBookings();
 });
 
 function initializeApp() {

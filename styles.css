@@ -385,5 +385,10 @@ select:focus {
   .booking-item {
     font-size: 0.68rem;
     padding: 4px 6px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calendar-header {
+    display: none;
   }
 }
