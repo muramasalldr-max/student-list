@@ -1,12 +1,16 @@
 :root {
-  --bg: #f6f7fb;
-  --card: #ffffff;
-  --accent: #2f6fed;
-  --accent-dark: #1f55c1;
-  --text: #1f2330;
-  --muted: #6b7280;
-  --border: #e3e6ef;
-  --success: #16a34a;
+  --bg: #0b0f1a;
+  --bg-secondary: #111827;
+  --card: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --accent: #7c5cff;
+  --accent-dark: #5b3ff2;
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  --border: rgba(148, 163, 184, 0.2);
+  --success: #22c55e;
+  --danger: #f87171;
+  --glow: rgba(124, 92, 255, 0.45);
 }
 
 * {
@@ -16,8 +20,21 @@
 body {
   margin: 0;
   font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
-  background: var(--bg);
+  background: radial-gradient(circle at top, rgba(124, 92, 255, 0.18), transparent 45%),
+    radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.2), transparent 40%),
+    var(--bg);
   color: var(--text);
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 80% 10%, rgba(34, 197, 94, 0.16), transparent 35%),
+    radial-gradient(circle at 70% 80%, rgba(14, 165, 233, 0.2), transparent 40%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .container {
@@ -26,14 +43,25 @@ body {
 }
 
 .site-header {
-  background: var(--card);
-  padding: 24px 0;
-  border-bottom: 1px solid var(--border);
+  background: linear-gradient(120deg, rgba(124, 92, 255, 0.24), rgba(14, 165, 233, 0.12));
+  padding: 32px 0 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
 }
 
 .subtitle {
-  margin-top: 6px;
+  margin-top: 10px;
   color: var(--muted);
+}
+
+h1 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+h2 {
+  margin: 0 0 14px;
 }
 
 .grid {
@@ -45,18 +73,21 @@ body {
 
 .card {
   background: var(--card);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(31, 35, 48, 0.07);
+  border-radius: 18px;
+  padding: 22px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 20px 45px rgba(8, 9, 20, 0.55);
+  backdrop-filter: blur(14px);
 }
 
 .today-card {
-  margin-top: 24px;
-  background: var(--card);
-  border-radius: 14px;
-  padding: 20px;
-  border-left: 6px solid var(--accent);
-  box-shadow: 0 10px 30px rgba(31, 35, 48, 0.07);
+  margin-top: 28px;
+  background: linear-gradient(130deg, rgba(124, 92, 255, 0.16), rgba(56, 189, 248, 0.12));
+  border-radius: 18px;
+  padding: 22px;
+  border: 1px solid rgba(124, 92, 255, 0.25);
+  box-shadow: 0 30px 60px rgba(8, 9, 20, 0.5);
+  backdrop-filter: blur(18px);
 }
 
 .today-card__header {
@@ -67,11 +98,12 @@ body {
 }
 
 .badge {
-  background: rgba(47, 111, 237, 0.12);
-  color: var(--accent-dark);
-  padding: 4px 10px;
+  background: rgba(124, 92, 255, 0.2);
+  color: #e0e7ff;
+  padding: 6px 12px;
   border-radius: 999px;
   font-size: 0.85rem;
+  border: 1px solid rgba(124, 92, 255, 0.35);
 }
 
 .form {
@@ -88,30 +120,34 @@ label {
 input,
 select {
   padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   font-size: 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--text);
 }
 
 input:focus,
 select:focus {
-  outline: 2px solid rgba(47, 111, 237, 0.2);
+  outline: 2px solid rgba(124, 92, 255, 0.4);
   border-color: var(--accent);
 }
 
 .primary {
-  background: var(--accent);
+  background: linear-gradient(120deg, var(--accent), #38bdf8);
   color: #fff;
   border: none;
   padding: 12px 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 24px rgba(124, 92, 255, 0.3);
 }
 
 .primary:hover {
-  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(124, 92, 255, 0.45);
 }
 
 .required {
@@ -134,16 +170,18 @@ select:focus {
 }
 
 .student-card {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
+  border: 1px solid rgba(124, 92, 255, 0.2);
+  border-radius: 16px;
+  padding: 14px;
   cursor: pointer;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+  transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  background: rgba(15, 23, 42, 0.6);
 }
 
 .student-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 10px 20px rgba(31, 35, 48, 0.08);
+  box-shadow: 0 16px 30px rgba(124, 92, 255, 0.25);
+  transform: translateY(-2px);
 }
 
 .student-card h3 {
@@ -172,17 +210,18 @@ select:focus {
 }
 
 .danger {
-  background: #ef4444;
+  background: linear-gradient(120deg, #f87171, #fb7185);
   color: #fff;
   border: none;
-  padding: 8px 12px;
-  border-radius: 10px;
+  padding: 8px 14px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: 0 10px 20px rgba(248, 113, 113, 0.35);
 }
 
 .danger:hover {
-  background: #dc2626;
+  filter: brightness(1.05);
 }
 
 .calendar-controls {
@@ -192,10 +231,11 @@ select:focus {
 }
 
 .calendar-controls button {
-  border: 1px solid var(--border);
-  background: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
+  border: 1px solid rgba(124, 92, 255, 0.3);
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 10px;
   cursor: pointer;
 }
 
@@ -214,24 +254,25 @@ select:focus {
 
 .calendar-cell {
   min-height: 110px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
   padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   cursor: pointer;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+  transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .calendar-cell:hover {
   border-color: var(--accent);
-  box-shadow: 0 6px 16px rgba(31, 35, 48, 0.08);
+  box-shadow: 0 12px 24px rgba(124, 92, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 .calendar-cell.disabled {
-  background: #f9fafb;
+  background: rgba(15, 23, 42, 0.3);
   color: var(--muted);
   cursor: default;
   border-style: dashed;
@@ -239,7 +280,7 @@ select:focus {
 
 .calendar-cell.today {
   border-color: var(--success);
-  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
 }
 
 .calendar-date {
@@ -252,10 +293,11 @@ select:focus {
 }
 
 .booking-item {
-  background: rgba(47, 111, 237, 0.1);
-  border-radius: 8px;
-  padding: 4px 6px;
+  background: rgba(124, 92, 255, 0.2);
+  border-radius: 10px;
+  padding: 5px 8px;
   font-size: 0.78rem;
+  border: 1px solid rgba(124, 92, 255, 0.35);
 }
 
 .booking-item button {
@@ -284,6 +326,19 @@ select:focus {
 .today-list li {
   border-left: 4px solid var(--accent);
   padding-left: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.today-list button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
 }
 
 .hidden {
@@ -295,7 +350,7 @@ select:focus {
 }
 
 .site-footer {
-  margin: 40px 0 20px;
+  margin: 48px 0 24px;
   text-align: center;
   color: var(--muted);
   font-size: 0.85rem;
