@@ -12,6 +12,7 @@ const calendar = document.getElementById("calendar");
 const currentMonthLabel = document.getElementById("currentMonth");
 const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
+const deleteStudentButton = document.getElementById("deleteStudent");
 const todayLabel = document.getElementById("todayLabel");
 const todayBookings = document.getElementById("todayBookings");
 const todayEmpty = document.getElementById("todayEmpty");
@@ -114,6 +115,28 @@ function selectStudent(studentId) {
   renderCalendar();
 }
 
+function deleteStudent(studentId) {
+  const student = students.find((item) => item.id === studentId);
+  if (!student) {
+    return { ok: false, message: "生徒情報が見つかりません。" };
+  }
+
+  const hasBookings = bookings.some((booking) => booking.studentId === studentId);
+  const confirmMessage = hasBookings
+    ? "この生徒の予約も削除されます。本当に削除しますか？"
+    : "この生徒を削除しますか？";
+
+  if (!confirm(confirmMessage)) {
+    return { ok: false, message: "削除をキャンセルしました。" };
+  }
+
+  students = students.filter((item) => item.id !== studentId);
+  bookings = bookings.filter((booking) => booking.studentId !== studentId);
+  saveStudents();
+  saveBookings();
+  return { ok: true };
+}
+
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -162,6 +185,19 @@ function createBooking({ studentId, date, startTime, endTime }) {
   bookings.push(booking);
   saveBookings();
   return { ok: true, booking };
+}
+
+function deleteBooking(bookingId) {
+  const booking = bookings.find((item) => item.id === bookingId);
+  if (!booking) {
+    return { ok: false, message: "予約が見つかりません。" };
+  }
+  if (!confirm("この予約を削除しますか？")) {
+    return { ok: false, message: "削除をキャンセルしました。" };
+  }
+  bookings = bookings.filter((item) => item.id !== bookingId);
+  saveBookings();
+  return { ok: true };
 }
 
 function listBookingsByDate(date) {
@@ -223,7 +259,19 @@ function renderCalendar() {
       dayBookings.forEach((booking) => {
         const item = document.createElement("div");
         item.className = "booking-item";
-        item.textContent = `${booking.startTime}-${booking.endTime} ${booking.studentName}`;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = `${booking.startTime}-${booking.endTime} ${booking.studentName}`;
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const result = deleteBooking(booking.id);
+          if (!result.ok) {
+            return;
+          }
+          renderCalendar();
+          renderTodayBookings();
+        });
+        item.appendChild(button);
         list.appendChild(item);
       });
       cell.appendChild(list);
@@ -273,7 +321,18 @@ function renderTodayBookings() {
 
   todayItems.forEach((booking) => {
     const li = document.createElement("li");
-    li.textContent = `${booking.startTime}-${booking.endTime} ${booking.studentName}`;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = `${booking.startTime}-${booking.endTime} ${booking.studentName}`;
+    button.addEventListener("click", () => {
+      const result = deleteBooking(booking.id);
+      if (!result.ok) {
+        return;
+      }
+      renderCalendar();
+      renderTodayBookings();
+    });
+    li.appendChild(button);
     todayBookings.appendChild(li);
   });
 }
@@ -315,6 +374,21 @@ prevMonthButton.addEventListener("click", () => {
 nextMonthButton.addEventListener("click", () => {
   currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
   renderCalendar();
+});
+
+deleteStudentButton.addEventListener("click", () => {
+  if (!selectedStudentId) {
+    alert("生徒を選択してください。");
+    return;
+  }
+  const result = deleteStudent(selectedStudentId);
+  if (!result.ok) {
+    return;
+  }
+  selectedStudentId = null;
+  studentDetail.classList.add("hidden");
+  listStudents();
+  renderTodayBookings();
 });
 
 function initializeApp() {
