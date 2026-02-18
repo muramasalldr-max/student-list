@@ -13,6 +13,10 @@ const currentMonthLabel = document.getElementById("currentMonth");
 const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 const deleteStudentButton = document.getElementById("deleteStudent");
+const addBookingButton = document.getElementById("addBooking");
+const scheduleDate = document.getElementById("scheduleDate");
+const scheduleList = document.getElementById("scheduleList");
+const scheduleEmpty = document.getElementById("scheduleEmpty");
 const todayLabel = document.getElementById("todayLabel");
 const todayBookings = document.getElementById("todayBookings");
 const todayEmpty = document.getElementById("todayEmpty");
@@ -21,6 +25,7 @@ let students = loadStudents();
 let bookings = loadBookings();
 let selectedStudentId = null;
 let currentMonth = new Date();
+let selectedDate = formatDate(new Date());
 
 const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -112,8 +117,10 @@ function selectStudent(studentId) {
   detailName.textContent = `${student.name} の予約カレンダー`;
   detailMeta.textContent = `${student.weekday} / ${student.startTime} / ${student.durationMin}分 / 月${student.lessonsPerMonth}回`;
   deleteStudentButton.disabled = false;
+  addBookingButton.disabled = false;
   studentDetail.classList.remove("hidden");
   renderCalendar();
+  renderSchedule(selectedDate);
 }
 
 function renderEmptyDetail() {
@@ -121,8 +128,10 @@ function renderEmptyDetail() {
   detailName.textContent = "生徒を選択してください";
   detailMeta.textContent = "生徒を選択するとカレンダーに予約を追加できます。";
   deleteStudentButton.disabled = true;
+  addBookingButton.disabled = true;
   studentDetail.classList.remove("hidden");
   renderCalendar();
+  renderSchedule(selectedDate);
 }
 
 function deleteStudent(studentId) {
@@ -220,6 +229,45 @@ function listBookingsByDate(date) {
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 }
 
+function renderSchedule(date) {
+  selectedDate = date;
+  const dateObject = new Date(date);
+  scheduleDate.textContent = `${dateObject.getFullYear()}年${dateObject.getMonth() + 1}月${dateObject.getDate()}日のスケジュール`;
+  const items = listBookingsByDate(date);
+
+  scheduleList.innerHTML = "";
+  scheduleEmpty.classList.toggle("hidden", items.length > 0);
+
+  items.forEach((booking) => {
+    const li = document.createElement("li");
+    li.className = "schedule-item";
+
+    const infoButton = document.createElement("button");
+    infoButton.type = "button";
+    infoButton.innerHTML = `
+      <div class="schedule-time">${booking.startTime} - ${booking.endTime}</div>
+      <div class="schedule-student">${booking.studentName}</div>
+    `;
+    infoButton.addEventListener("click", () => {
+      const result = deleteBooking(booking.id);
+      if (!result.ok) {
+        return;
+      }
+      renderCalendar();
+      renderSchedule(selectedDate);
+      renderTodayBookings();
+    });
+
+    const deleteHint = document.createElement("span");
+    deleteHint.className = "schedule-action";
+    deleteHint.textContent = "削除";
+
+    li.appendChild(infoButton);
+    li.appendChild(deleteHint);
+    scheduleList.appendChild(li);
+  });
+}
+
 function renderCalendar() {
   calendar.innerHTML = "";
   currentMonthLabel.textContent = formatMonth(currentMonth);
@@ -262,29 +310,16 @@ function renderCalendar() {
       cell.classList.add("today");
     }
 
+    if (cellDateKey === selectedDate) {
+      cell.classList.add("selected");
+    }
+
     const dayBookings = listBookingsByDate(cellDateKey);
     if (dayBookings.length) {
-      const list = document.createElement("div");
-      list.className = "booking-list";
-      dayBookings.forEach((booking) => {
-        const item = document.createElement("div");
-        item.className = "booking-item";
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = `${booking.startTime}-${booking.endTime} ${booking.studentName}`;
-        button.addEventListener("click", (event) => {
-          event.stopPropagation();
-          const result = deleteBooking(booking.id);
-          if (!result.ok) {
-            return;
-          }
-          renderCalendar();
-          renderTodayBookings();
-        });
-        item.appendChild(button);
-        list.appendChild(item);
-      });
-      cell.appendChild(list);
+      const check = document.createElement("div");
+      check.className = "calendar-check";
+      check.textContent = "✓";
+      cell.appendChild(check);
     }
 
     cell.addEventListener("click", () => handleDateClick(cellDateKey));
@@ -293,31 +328,8 @@ function renderCalendar() {
 }
 
 function handleDateClick(date) {
-  if (!selectedStudentId) {
-    alert("生徒を選択してください。");
-    return;
-  }
-  const student = students.find((item) => item.id === selectedStudentId);
-  if (!student) {
-    alert("生徒情報が見つかりません。");
-    return;
-  }
-
-  const endTime = addMinutes(student.startTime, student.durationMin);
-  const result = createBooking({
-    studentId: selectedStudentId,
-    date,
-    startTime: student.startTime,
-    endTime,
-  });
-
-  if (!result.ok) {
-    alert(result.message);
-    return;
-  }
-
+  renderSchedule(date);
   renderCalendar();
-  renderTodayBookings();
 }
 
 function renderTodayBookings() {
@@ -340,6 +352,7 @@ function renderTodayBookings() {
         return;
       }
       renderCalendar();
+      renderSchedule(selectedDate);
       renderTodayBookings();
     });
     li.appendChild(button);
@@ -374,6 +387,9 @@ studentForm.addEventListener("submit", (event) => {
   studentForm.reset();
   listStudents();
   renderTodayBookings();
+  if (selectedStudentId) {
+    renderSchedule(selectedDate);
+  }
 });
 
 prevMonthButton.addEventListener("click", () => {
@@ -384,6 +400,35 @@ prevMonthButton.addEventListener("click", () => {
 nextMonthButton.addEventListener("click", () => {
   currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
   renderCalendar();
+});
+
+addBookingButton.addEventListener("click", () => {
+  if (!selectedStudentId) {
+    alert("生徒を選択してください。");
+    return;
+  }
+  const student = students.find((item) => item.id === selectedStudentId);
+  if (!student) {
+    alert("生徒情報が見つかりません。");
+    return;
+  }
+
+  const endTime = addMinutes(student.startTime, student.durationMin);
+  const result = createBooking({
+    studentId: selectedStudentId,
+    date: selectedDate,
+    startTime: student.startTime,
+    endTime,
+  });
+
+  if (!result.ok) {
+    alert(result.message);
+    return;
+  }
+
+  renderCalendar();
+  renderSchedule(selectedDate);
+  renderTodayBookings();
 });
 
 deleteStudentButton.addEventListener("click", () => {
@@ -402,10 +447,6 @@ deleteStudentButton.addEventListener("click", () => {
     return;
   }
   renderEmptyDetail();
-  selectedStudentId = null;
-  studentDetail.classList.add("hidden");
-  listStudents();
-  renderTodayBookings();
 });
 
 function initializeApp() {

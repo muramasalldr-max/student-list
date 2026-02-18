@@ -69,14 +69,14 @@
       </div>
     </section>
 
-    <section id="studentDetail" class="card hidden">
+    <section id="studentDetail" class="card">
       <div class="detail-header">
         <div>
-          <h2 id="detailName">生徒詳細</h2>
-          <p id="detailMeta" class="muted"></p>
+          <h2 id="detailName">生徒を選択してください</h2>
+          <p id="detailMeta" class="muted">生徒を選択するとカレンダーに予約を追加できます。</p>
         </div>
         <div class="detail-actions">
-          <button id="deleteStudent" type="button" class="danger">生徒を削除</button>
+          <button id="deleteStudent" type="button" class="danger" disabled>生徒を削除</button>
         </div>
         <div class="calendar-controls">
           <button id="prevMonth" type="button">前月</button>
@@ -85,10 +85,18 @@
         </div>
       </div>
       <div class="booking-legend">
-        <span>予約はクリックで削除できます。</span>
+        <span>予約はスケジュール内をクリックで削除できます。</span>
       </div>
       <div id="calendar" class="calendar"></div>
-      <p class="muted">日付をクリックして予約を追加します。</p>
+      <div class="schedule-panel">
+        <div class="schedule-header">
+          <h3 id="scheduleDate">選択日のスケジュール</h3>
+          <button id="addBooking" type="button" class="primary" disabled>この日に予約追加</button>
+        </div>
+        <ul id="scheduleList" class="schedule-list"></ul>
+        <p id="scheduleEmpty" class="muted">この日の予約はありません。</p>
+      </div>
+      <p class="muted">日付をクリックしてスケジュールを確認し、必要なら予約を追加します。</p>
     </section>
   </main>
 
