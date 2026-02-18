@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ドラム教室 - 生徒管理＋予約カレンダー</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>ドラム教室 生徒管理＋予約カレンダー</h1>
+      <p class="subtitle">ローカルで動くMVP（localStorage保存）</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="today-card">
+      <div class="today-card__header">
+        <h2>今日の予定</h2>
+        <span id="todayLabel" class="badge"></span>
+      </div>
+      <ul id="todayBookings" class="today-list"></ul>
+      <p id="todayEmpty" class="muted">今日の予約はありません。</p>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>生徒登録</h2>
+        <form id="studentForm" class="form">
+          <label>
+            生徒名<span class="required">*</span>
+            <input type="text" id="studentName" placeholder="例：山田 太郎" required />
+          </label>
+          <label>
+            曜日<span class="required">*</span>
+            <select id="studentWeekday" required>
+              <option value="">選択してください</option>
+              <option value="月">月</option>
+              <option value="火">火</option>
+              <option value="水">水</option>
+              <option value="木">木</option>
+              <option value="金">金</option>
+              <option value="土">土</option>
+              <option value="日">日</option>
+            </select>
+          </label>
+          <label>
+            開始時刻<span class="required">*</span>
+            <input type="time" id="studentStart" required />
+          </label>
+          <label>
+            1コマ分数<span class="required">*</span>
+            <input type="number" id="studentDuration" min="1" placeholder="例：60" required />
+          </label>
+          <label>
+            月の回数<span class="required">*</span>
+            <input type="number" id="studentLessons" min="1" placeholder="例：4" required />
+          </label>
+          <button type="submit" class="primary">登録する</button>
+          <p id="studentFormError" class="form-error" role="alert"></p>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>生徒一覧</h2>
+        <ul id="studentList" class="student-list"></ul>
+        <p id="studentListEmpty" class="muted">まだ生徒が登録されていません。</p>
+      </div>
+    </section>
+
+    <section id="studentDetail" class="card">
+      <div class="detail-header">
+        <div>
+          <h2 id="detailName">生徒を選択してください</h2>
+          <p id="detailMeta" class="muted">生徒を選択するとカレンダーに予約を追加できます。</p>
+        </div>
+        <div class="detail-actions">
+          <button id="deleteStudent" type="button" class="danger" disabled>生徒を削除</button>
+        </div>
+        <div class="calendar-controls">
+          <button id="prevMonth" type="button">前月</button>
+          <span id="currentMonth"></span>
+          <button id="nextMonth" type="button">次月</button>
+        </div>
+      </div>
+      <div class="booking-legend">
+        <span>予約はスケジュール内をクリックで削除できます。</span>
+      </div>
+      <div id="calendar" class="calendar"></div>
+      <div class="schedule-panel">
+        <div class="schedule-header">
+          <h3 id="scheduleDate">選択日のスケジュール</h3>
+          <button id="addBooking" type="button" class="primary" disabled>この日に予約追加</button>
+        </div>
+        <ul id="scheduleList" class="schedule-list"></ul>
+        <p id="scheduleEmpty" class="muted">この日の予約はありません。</p>
+      </div>
+      <p class="muted">日付をクリックしてスケジュールを確認し、必要なら予約を追加します。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>データはブラウザのlocalStorageに保存されます。</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
