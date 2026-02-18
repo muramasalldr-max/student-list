@@ -169,6 +169,10 @@ select:focus {
   gap: 12px;
 }
 
+.student-select {
+  width: 100%;
+}
+
 .student-card {
   border: 1px solid rgba(124, 92, 255, 0.2);
   border-radius: 16px;

@@ -90,26 +90,26 @@ function createStudent(formData) {
 }
 
 function listStudents() {
-  studentList.innerHTML = "";
+  studentList.innerHTML = '<option value="">生徒を選択してください</option>';
   studentListEmpty.classList.toggle("hidden", students.length > 0);
 
   students
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name, "ja"))
     .forEach((student) => {
-      const li = document.createElement("li");
-      li.className = "student-card";
-      li.innerHTML = `
-        <h3>${student.name}</h3>
-        <p>${student.weekday} / ${student.startTime} / ${student.durationMin}分 / 月${student.lessonsPerMonth}回</p>
-      `;
-      li.addEventListener("click", () => selectStudent(student.id));
-      studentList.appendChild(li);
+      const option = document.createElement("option");
+      option.value = student.id;
+      option.textContent = `${student.name}（${student.weekday} / ${student.startTime} / ${student.durationMin}分 / 月${student.lessonsPerMonth}回）`;
+      if (student.id === selectedStudentId) {
+        option.selected = true;
+      }
+      studentList.appendChild(option);
     });
 }
 
 function selectStudent(studentId) {
   selectedStudentId = studentId;
+  studentList.value = studentId;
   const student = students.find((item) => item.id === studentId);
   if (!student) {
     return;
@@ -125,6 +125,7 @@ function selectStudent(studentId) {
 
 function renderEmptyDetail() {
   selectedStudentId = null;
+  studentList.value = "";
   detailName.textContent = "生徒を選択してください";
   detailMeta.textContent = "生徒を選択するとカレンダーに予約を追加できます。";
   deleteStudentButton.disabled = true;
@@ -359,6 +360,16 @@ function renderTodayBookings() {
     todayBookings.appendChild(li);
   });
 }
+
+
+studentList.addEventListener("change", (event) => {
+  const studentId = event.target.value;
+  if (!studentId) {
+    renderEmptyDetail();
+    return;
+  }
+  selectStudent(studentId);
+});
 
 studentForm.addEventListener("submit", (event) => {
   event.preventDefault();
