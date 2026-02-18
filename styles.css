@@ -385,6 +385,32 @@ select:focus {
 .schedule-action {
   font-size: 0.8rem;
   color: #fca5a5;
+.booking-list {
+  display: grid;
+  gap: 4px;
+}
+
+.booking-item {
+  background: rgba(124, 92, 255, 0.2);
+  border-radius: 10px;
+  padding: 5px 8px;
+  font-size: 0.78rem;
+  border: 1px solid rgba(124, 92, 255, 0.35);
+}
+
+.booking-item button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.booking-legend {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .today-list {
@@ -459,5 +485,13 @@ select:focus {
 
   .schedule-item {
     padding: 8px 10px;
+  .booking-item {
+    font-size: 0.68rem;
+    padding: 4px 6px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calendar-header {
+    display: none;
   }
 }
