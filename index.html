@@ -26,8 +26,12 @@
 
     <section class="grid">
       <div class="card">
-        <h2>生徒登録</h2>
-        <form id="studentForm" class="form">
+        <details id="studentFormAccordion" class="accordion">
+          <summary class="accordion-summary">
+            <h2>生徒登録</h2>
+            <span class="accordion-hint">タップして開く</span>
+          </summary>
+        <form id="studentForm" class="form accordion-content">
           <label>
             生徒名<span class="required">*</span>
             <input type="text" id="studentName" placeholder="例：山田 太郎" required />
@@ -60,6 +64,7 @@
           <button type="submit" class="primary">登録する</button>
           <p id="studentFormError" class="form-error" role="alert"></p>
         </form>
+        </details>
       </div>
 
       <div class="card">

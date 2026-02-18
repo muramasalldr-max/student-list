@@ -106,6 +106,43 @@ h2 {
   border: 1px solid rgba(124, 92, 255, 0.35);
 }
 
+
+.accordion {
+  border: 1px solid rgba(124, 92, 255, 0.2);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.accordion-summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-summary h2 {
+  margin: 0;
+}
+
+.accordion-hint {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.accordion[open] .accordion-hint {
+  color: #e0e7ff;
+}
+
+.accordion-content {
+  margin-top: 14px;
+}
 .form {
   display: grid;
   gap: 12px;
